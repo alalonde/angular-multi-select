@@ -12,6 +12,6 @@ Features:
 Usage:
 `angular.module('myApp', ['multi-select', ...]);`
 
-Demo here: http://jsfiddle.net/alalonde/meJZK/
+Demo here: http://jsfiddle.net/alalonde/dzSLe/
 
 More infomation here: http://blog.boxelderweb.com/2013/08/22/angularjs-multi-select-widget/
