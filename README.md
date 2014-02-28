@@ -3,7 +3,7 @@ angular-multi-select
 
 A multiple-select widget for AngularJS.
 
-Mobile friendly: Uses checkboxes rather than <input type="multiple"> for each selection side. 
+Mobile friendly: Uses checkboxes rather than &lt;input type="multiple"&gt; for each selection side. 
 
 Features:
 * Pass in an expression to represent the display of an item
