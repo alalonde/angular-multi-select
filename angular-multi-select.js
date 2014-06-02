@@ -74,7 +74,8 @@
         /* Handles cases where scope data hasn't been initialized yet */
         var dataLoading = function(scopeAttr) {
           var loading = $q.defer();
-          if(scope[scopeAttr] && !scope[scopeAttr].hasOwnProperty('$promise')) {
+          if((scope[scopeAttr] && scope[scopeAttr].length > 0) ||
+              (scope[scopeAttr] && !scope[scopeAttr].hasOwnProperty('$promise'))) {
             loading.resolve(scope[scopeAttr]);
           } else {
             scope.$watch(scopeAttr, function(newValue, oldValue) {
