@@ -8,6 +8,7 @@ Mobile friendly: Uses checkboxes rather than &lt;input type="multiple"&gt; for e
 Features:
 * Pass in an expression to represent the display of an item
 * Column headers customizable
+* (6/3/14) Supports a new attribute 'required-min' which adds form validation for a minimum number of selected values.
 
 Usage:
 `angular.module('myApp', ['multi-select', ...]);`

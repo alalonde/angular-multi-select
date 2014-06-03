@@ -7,7 +7,7 @@
   'use strict';
   angular.module('multi-select', [])
 
-  .directive('multiSelect', ['$q', function($q) {
+  .directive('multiSelect', ['$q', '$compile', function($q, $compile) {
 
     function appendSelected(entities) {
       var newEntities = [];
@@ -64,8 +64,10 @@
                       '</li>' +
                     '</ul>' +
                   '</div>' +
+                  '<input type="number" name="numSelected" ng-model="numSelected" ' +
+                      'style="display: none">' +
                 '</div>',
-      link: function(scope, elm, attrs) {
+      link: function(scope, elm, attrs, controllers) {
         scope.selected = {
           available: [],
           current: []
@@ -74,12 +76,12 @@
         /* Handles cases where scope data hasn't been initialized yet */
         var dataLoading = function(scopeAttr) {
           var loading = $q.defer();
-          if((scope[scopeAttr] && scope[scopeAttr].length > 0) ||
-              (scope[scopeAttr] && !scope[scopeAttr].hasOwnProperty('$promise'))) {
+          if((scope[scopeAttr] && !scope[scopeAttr].hasOwnProperty('$promise')) ||
+              (scope[scopeAttr] && scope[scopeAttr].length > 0)) {
             loading.resolve(scope[scopeAttr]);
           } else {
             scope.$watch(scopeAttr, function(newValue, oldValue) {
-              if(newValue !== undefined && oldValue === undefined)
+              if(newValue && newValue.length > 0)
                 loading.resolve(newValue);
             });  
           }
@@ -134,6 +136,21 @@
           scope[displayComponents[1]] = item;
           return scope.$eval(displayComponents[2]);
         };
+
+        scope.$watch('model', function(selected) {
+          if(attrs.requiredMin && selected) {
+            scope.numSelected = selected.length; 
+            inputModel.$setValidity('min', scope.numSelected >= requiredMin);
+          }
+        });
+        
+        var requiredMin, inputModel;
+        if(attrs.requiredMin) {
+          requiredMin = parseInt(attrs.requiredMin, 10);
+          var inputs = elm.find("input");
+          var validationInput = angular.element(inputs[inputs.length - 1]);
+          inputModel = validationInput.controller('ngModel');
+        }
       }
     };
   }])
