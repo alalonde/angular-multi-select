@@ -9,6 +9,7 @@ Features:
 * Pass in an expression to represent the display of an item
 * Column headers customizable
 * (6/3/14) Supports a new attribute 'required-min' which adds form validation for a minimum number of selected values.
+* (6/5/14) If a 'title' expression is provided, it is evaluated to show a tooltip for each item
 
 Usage:
 `angular.module('myApp', ['multi-select', ...]);`

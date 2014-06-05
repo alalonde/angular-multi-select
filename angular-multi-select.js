@@ -7,7 +7,7 @@
   'use strict';
   angular.module('multi-select', [])
 
-  .directive('multiSelect', ['$q', '$compile', function($q, $compile) {
+  .directive('multiSelect', ['$q', '$parse', function($q, $parse) {
 
     function appendSelected(entities) {
       var newEntities = [];
@@ -25,7 +25,6 @@
       scope: {
         selectedLabel: "@",
         availableLabel: "@",
-        display: "@",
         available: "=",
         model: "=ngModel"
       },
@@ -35,7 +34,7 @@
                         '({{ model.length }})</label>' +
                     '<ul>' + 
                       '<li ng-repeat="entity in model">' + 
-                        '<label class="checkbox">' + 
+                        '<label class="checkbox" title="{{ renderTitle(entity) }}">' + 
                           '<input type="checkbox" ng-model="selected.current[$index].selected"> ' + 
                           '{{ renderItem(entity) }}' + 
                         '</label>' +
@@ -57,17 +56,15 @@
                         '({{ available.length }})</label>' +
                     '<ul>' + 
                       '<li ng-repeat="entity in available">' + 
-                        '<label class="checkbox">' + 
+                        '<label class="checkbox" title="{{ renderTitle(entity) }}">' + 
                           '<input type="checkbox" ng-model="selected.available[$index].selected"> ' + 
                           '{{ renderItem(entity) }}' + 
                         '</label>' +
                       '</li>' +
                     '</ul>' +
                   '</div>' +
-                  '<input type="number" name="numSelected" ng-model="numSelected" ' +
-                      'style="display: none">' +
                 '</div>',
-      link: function(scope, elm, attrs, controllers) {
+      link: function(scope, elm, attrs) {
         scope.selected = {
           available: [],
           current: []
@@ -76,12 +73,11 @@
         /* Handles cases where scope data hasn't been initialized yet */
         var dataLoading = function(scopeAttr) {
           var loading = $q.defer();
-          if((scope[scopeAttr] && !scope[scopeAttr].hasOwnProperty('$promise')) ||
-              (scope[scopeAttr] && scope[scopeAttr].length > 0)) {
+          if(scope[scopeAttr] && !scope[scopeAttr].hasOwnProperty('$promise')) {
             loading.resolve(scope[scopeAttr]);
           } else {
             scope.$watch(scopeAttr, function(newValue, oldValue) {
-              if(newValue && newValue.length > 0)
+              if(newValue !== undefined && oldValue === undefined)
                 loading.resolve(newValue);
             });  
           }
@@ -131,26 +127,23 @@
           scope.$watch('model', scope.refreshAvailable);
         });
 
+        function parseExpression(item, expr) {
+          var displayComponents = expr.match(/(.+)\s+as\s+(.+)/);
+          var ctx = {};
+          ctx[displayComponents[1]] = item;
+          return $parse(displayComponents[2])(ctx);
+        }
+
         scope.renderItem = function(item) {
-          var displayComponents = attrs.display.match(/(.+)\s+as\s+(.+)/);
-          scope[displayComponents[1]] = item;
-          return scope.$eval(displayComponents[2]);
+          return parseExpression(item, attrs.display);
         };
 
-        scope.$watch('model', function(selected) {
-          if(attrs.requiredMin && selected) {
-            scope.numSelected = selected.length; 
-            inputModel.$setValidity('min', scope.numSelected >= requiredMin);
+        scope.renderTitle = function(item) {
+          if(attrs.title) {
+            return parseExpression(item, attrs.title);
           }
-        });
-        
-        var requiredMin, inputModel;
-        if(attrs.requiredMin) {
-          requiredMin = parseInt(attrs.requiredMin, 10);
-          var inputs = elm.find("input");
-          var validationInput = angular.element(inputs[inputs.length - 1]);
-          inputModel = validationInput.controller('ngModel');
-        }
+          return "";
+        };
       }
     };
   }])
