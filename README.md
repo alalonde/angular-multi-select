@@ -17,3 +17,5 @@ Usage:
 Demo here: http://jsfiddle.net/alalonde/dzSLe/
 
 More infomation here: http://blog.boxelderweb.com/2013/08/22/angularjs-multi-select-widget/
+
+License: MIT
