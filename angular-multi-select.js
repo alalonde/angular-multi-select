@@ -48,6 +48,25 @@
               '</tr>' +
             '</thead>' +
             '<tr>' +
+              '<td>' +
+                '<ul>' + 
+                '<li>' + 
+                  '<input type="checkbox" ng-model="leftallchkd" ng-change="leftallnone(model)" title="Select None"> ' + 
+                  '</li>' + 
+                '</ul>' + 
+              '</td>' +
+              '<td>' +
+                '&nbsp;' +
+              '</td>' +
+              '<td>' +
+                '<ul>' + 
+                '<li>' + 
+                '<input type="checkbox" ng-model="rightallchkd" ng-change="rightallnone(available)" title="Check/Uncheck all"> ' + 
+                '</li>' + 
+                '</ul>' + 
+              '</td>' +
+            '</tr>' +            
+            '<tr>' +
               '<td class="selectcell">' +
                 '<div class="select">' + // select list on the left
                   '<ul>' +
@@ -85,34 +104,13 @@
                 '</div>' +
               '</td>' +
             '</tr>' +
-            '<tr>' +
-              '<td>' +
-                '<div class="select buttons">' + 
-                  '<button class="btn " ng-click="selnone(model)" title="Select None"> ' + 
-                      'None' + 
-                  '</button>&nbsp;' + 
-                  '<button class="btn " ng-click="selall(model)" title="Select All"> ' + 
-                    'All' + 
-                  '</button>' +
-                '</div>'+
-              '</td>' +
-              '<td>' +
-                '&nbsp;' +
-              '</td>' +
-              '<td>' +
-                '<div class="select buttons">' + 
-                  '<button class="btn " ng-click="selnone(available)" title="Select None"> ' + 
-                    'None' + 
-                  '</button>&nbsp;' + 
-                  '<button class="btn " ng-click="selall(available)" title="Select All"> ' + 
-                    'All' + 
-                  '</button>' +
-                '</div>'+
-              '</td>' +
-            '</tr>' +
           '</table>' +
         '</div>',
         link: function(scope, elm, attrs) {
+          
+          scope.leftallchkd=false;
+          scope.rightallchkd=false;
+          
           scope.selected = {
             available: [],
             current: []
@@ -158,11 +156,15 @@
 
           scope.add = function() {
             scope.model = scope.model.concat(scope.selected(scope.selected.available));
+            scope.leftallchkd = false;
+            scope.rightallchkd = false;
           };
           scope.remove = function() {
             var selected = scope.selected(scope.selected.current);
             scope.available = scope.available.concat(selected);
             scope.model = filterOut(scope.model, selected);
+            scope.leftallchkd = false;
+            scope.rightallchkd = false;
           };
           scope.selected = function(list) {
             var found = [];
@@ -170,6 +172,19 @@
               if (item.selected === true) found.push(item);
             });
             return found;
+          };
+
+
+          scope.leftallnone  = function(list) {
+            angular.forEach(list, function(item) {
+              item.selected = scope.leftallchkd;
+            });  
+          };
+          
+            scope.rightallnone  = function(list) {
+            angular.forEach(list, function(item) {
+              item.selected = scope.rightallchkd;
+            });  
           };
 
           scope.selnone = function(list) {
