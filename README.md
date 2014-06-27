@@ -15,6 +15,7 @@ Usage:
 `angular.module('myApp', ['multi-select', ...]);`
 
 Demo here: http://jsfiddle.net/alalonde/dzSLe/
+Demo with Select All and None here: http://plnkr.co/edit/rt00RjVQ5pX1ZODJ4Ogr?p=preview
 
 More infomation here: http://blog.boxelderweb.com/2013/08/22/angularjs-multi-select-widget/
 
