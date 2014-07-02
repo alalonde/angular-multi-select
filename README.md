@@ -17,20 +17,25 @@ Usage:
 
 Example:
 
-`<multi-select ng-model="user.roles" available="roles" selected-label="Current roles" 
+```
+<multi-select ng-model="user.roles" available="roles" selected-label="Current roles" 
     available-label="Available roles" display="r as r.roleName"
-    title="r as r.roleDescription" config="selectConfig"></multi-select>`
+    title="r as r.roleDescription" config="selectConfig"></multi-select>
+```
+    
 
 where the controller contains
 
-`$scope.roles = [
-    {roleId: 1, roleName: "Administrator", roleDescription: "Can do a bunch of stuff"},
-    {roleId: 2, roleName: "Super User", roleDescription: "Ultimate power!"}
-  ];
+```
+$scope.roles = [
+  {roleId: 1, roleName: "Administrator", roleDescription: "Can do a bunch of stuff"},
+  {roleId: 2, roleName: "Super User", roleDescription: "Ultimate power!"}
+];
   
-  $scope.selectConfig = {
-    requiredMin: 1
-  };`
+$scope.selectConfig = {
+  requiredMin: 1
+};
+```
 
 More information here: http://blog.boxelderweb.com/2013/08/22/angularjs-multi-select-widget/
 
