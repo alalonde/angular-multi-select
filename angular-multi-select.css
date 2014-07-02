@@ -1,0 +1,39 @@
+.multiSelect {
+    overflow: auto;
+    padding-bottom: 10px;
+}
+.multiSelect ul {
+  list-style: none;
+}
+.multiSelect .select {
+    margin-right: 20px;
+    float: left;
+}
+.multiSelect .text {
+    clear: both;
+    font-size: 11px;
+}
+.multiSelect label.control-label::after {
+    content: ":";
+}
+.multiSelect label.checkbox {
+    margin-bottom: 0;
+}
+.btn.mover {
+    display: block;
+    margin-top: 25px;
+    vertical-align: top;
+}
+.btn.mover.left {
+    padding: 6px 8px 6px 6px;
+}
+.btn.mover.right {
+    margin-top: 5px;
+    padding: 6px 7px;
+}
+.buttons.stacked .btn.mover {
+    margin: 0 0 10px 0;
+}
+.btn.mover.left i, .btn.mover.right i {
+    margin: 0;
+}

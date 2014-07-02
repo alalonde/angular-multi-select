@@ -1,0 +1,10 @@
+/* demo css */
+body {
+  padding: 20px;
+}
+ul.detail li {
+    list-style-type: disc;
+}
+.input-error {
+    color:#b94a48;
+}

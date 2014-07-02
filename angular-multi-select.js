@@ -26,7 +26,8 @@
         selectedLabel: "@",
         availableLabel: "@",
         available: "=",
-        model: "=ngModel"
+        model: "=ngModel",
+        config: "="
       },
       template: '<div class="multiSelect">' + 
                   '<div class="select">' + 
@@ -63,8 +64,10 @@
                       '</li>' +
                     '</ul>' +
                   '</div>' +
+                  '<input type="number" name="numSelected" ng-model="numSelected" ' +
+                      'style="display: none">' +
                 '</div>',
-      link: function(scope, elm, attrs) {
+      link: function(scope, elm, attrs, controllers) {
         scope.selected = {
           available: [],
           current: []
@@ -73,11 +76,12 @@
         /* Handles cases where scope data hasn't been initialized yet */
         var dataLoading = function(scopeAttr) {
           var loading = $q.defer();
-          if(scope[scopeAttr] && !scope[scopeAttr].hasOwnProperty('$promise')) {
+          if((scope[scopeAttr] && !scope[scopeAttr].hasOwnProperty('$promise')) ||
+              (scope[scopeAttr] && scope[scopeAttr].length > 0)) {
             loading.resolve(scope[scopeAttr]);
           } else {
             scope.$watch(scopeAttr, function(newValue, oldValue) {
-              if(newValue !== undefined && oldValue === undefined)
+              if(newValue && newValue.length > 0)
                 loading.resolve(newValue);
             });  
           }
@@ -100,6 +104,21 @@
             }
           });
           return filtered;
+        }
+
+        function parseExpression(item, expr) {
+          var displayComponents = expr.match(/(.+)\s+as\s+(.+)/);
+          var ctx = {};
+          ctx[displayComponents[1]] = item;
+          return $parse(displayComponents[2])(ctx);
+        }
+
+        var requiredMin, inputModel;  
+        function ensureMinSelected() {
+          if(requiredMin && scope.model) {
+            scope.numSelected = scope.model.length; 
+            inputModel.$setValidity('min', scope.numSelected >= requiredMin);
+          }
         }
 
         scope.refreshAvailable = function() {
@@ -127,13 +146,6 @@
           scope.$watch('model', scope.refreshAvailable);
         });
 
-        function parseExpression(item, expr) {
-          var displayComponents = expr.match(/(.+)\s+as\s+(.+)/);
-          var ctx = {};
-          ctx[displayComponents[1]] = item;
-          return $parse(displayComponents[2])(ctx);
-        }
-
         scope.renderItem = function(item) {
           return parseExpression(item, attrs.display);
         };
@@ -144,6 +156,23 @@
           }
           return "";
         };
+      
+        if(scope.config && angular.isDefined(scope.config.requiredMin)) {
+          var inputs = elm.find("input");
+          var validationInput = angular.element(inputs[inputs.length - 1]);
+          inputModel = validationInput.controller('ngModel');
+        }
+
+        scope.$watch('config.requiredMin', function(value) {
+          if(angular.isDefined(value)) {
+            requiredMin = parseInt(value, 10);
+            ensureMinSelected();
+          }
+        });
+
+        scope.$watch('model', function(selected) {
+          ensureMinSelected();
+        });
       }
     };
   }])
