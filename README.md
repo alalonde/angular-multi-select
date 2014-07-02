@@ -31,6 +31,10 @@ $scope.roles = [
   {roleId: 1, roleName: "Administrator", roleDescription: "Can do a bunch of stuff"},
   {roleId: 2, roleName: "Super User", roleDescription: "Ultimate power!"}
 ];
+
+$scope.user = {
+  roles: [$scope.roles[0]]
+};
   
 $scope.selectConfig = {
   requiredMin: 1
