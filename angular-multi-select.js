@@ -39,15 +39,12 @@
         /* Handles cases where scope data hasn't been initialized yet */
         var dataLoading = function(scopeAttr) {
           var loading = $q.defer();
-          if((scope[scopeAttr] && !scope[scopeAttr].hasOwnProperty('$promise')) ||
-              (scope[scopeAttr] && scope[scopeAttr].length > 0)) {
-            loading.resolve(scope[scopeAttr]);
-          } else {
-            scope.$watch(scopeAttr, function(newValue, oldValue) {
-              if(newValue && newValue.length > 0)
-                loading.resolve(newValue);
-            });  
-          }
+
+           scope.$watch(scopeAttr, function(newValue, oldValue) {
+             if(newValue && newValue.length > 0)
+               loading.resolve(newValue);
+           });  
+
           return loading.promise;
         };
 
