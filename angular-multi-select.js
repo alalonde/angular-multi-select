@@ -70,9 +70,11 @@
         }
 
         scope.refreshAvailable = function() {
-          scope.available = filterOut(scope.available, scope.model);
-          scope.selected.available = appendSelected(scope.available);         
-          scope.selected.current = appendSelected(scope.model);
+          if(scope.model && scope.available){
+            scope.available = filterOut(scope.available, scope.model);
+            scope.selected.available = appendSelected(scope.available);         
+            scope.selected.current = appendSelected(scope.model);
+          }
         }; 
 
         scope.add = function() {
@@ -115,8 +117,8 @@
           }
           else{
             //We only want to refresh the list if the list of available items has changed
-            //and the variable and model is defined
-            if(scope.available && scope.model && scope.available != _oldAvailable){
+            //and the variable is defined
+            if(scope.available && scope.available != _oldAvailable){
               scope.refreshAvailable();
               _oldAvailable = scope.available; 
             }
