@@ -85,29 +85,27 @@ describe('directive: multi-select', function() {
       scope.available = [];
 
       scope.$digest();
-    });
 
-    it("should return a list of data from the $resource", function() {
       //Loading data from $resource
       scope.available = UsersResource.query();
       httpBackend.flush();    
+    });
+
+    it("should return a list of data from the $resource", function() {
       expect(scope.available.length).toBeGreaterThan(0);
     });
 
     it("should create list of available and selected elements", function() {
-      scope.available = UsersResource.query();
-      httpBackend.flush();      
-
       expect(scope.available[0].name).toBe("name2");
       expect(DOMgetAvailable().length).toBe(2);   
     });    
 
-    it("should updated the available and selected lists when an element is selected and added", function() {
-      scope.available = UsersResource.query();
-      httpBackend.flush();      
+    it("should updated the available and selected lists when an element is selected and added", function() { 
+      //Available list should have two elements
+      expect(DOMgetAvailable().length).toBe(2);
 
       //Selecting the first element on the list
-      DOMgetAvailable().find("input:first").click();
+      DOMgetAvailable().find("input:first")[0].click();
 
       //Expecting the checkbox to be selected
       expect(DOMgetAvailable().find("input:first").prop("checked")).toBe(true);
@@ -115,9 +113,78 @@ describe('directive: multi-select', function() {
       //Clicking the add button
       element.find(".btn.mover.left")[0].click();
 
-      //The added element should be moved to the selected elements
-      expect(DOMgetAvailable().length).toBe(2);     
-    });       
+      //The added element should be moved to the selected elements, leaving just one element in the
+      //available list
+      expect(DOMgetAvailable().length).toBe(1);
+      expect(DOMgetSelected().length).toBe(2);     
+    });  
+
+    it("should updated the available and selected lists when an element is selected and removed", function() {
+      //Select list should have one element
+      expect(DOMgetSelected().length).toBe(1);
+
+      //Selecting the first element on the select list
+      DOMgetSelected().find("input:first")[0].click();
+
+      //Expecting the checkbox to be selected
+      expect(DOMgetSelected().find("input:first").prop("checked")).toBe(true);
+
+      //Clicking the remove button
+      element.find(".btn.mover.right")[0].click();
+
+      //The added element should be moved to the available elements, leaving three elements in the
+      //available list
+      expect(DOMgetAvailable().length).toBe(3);
+      expect(DOMgetSelected().length).toBe(0);     
+    });      
   });
+
+  describe("should add and remove elements", function(){
+    beforeEach(function(){
+      scope.selected = [{name: "name1", title: "title1"}];
+      scope.available = [{name: "name1", title: "title1"}, {name: "name2", title: "title2"}, {name: "name3", title: "title3"}];
+      scope.$digest();
+    });
+
+    it("should be able to add and remove an element", function() {
+      /*
+        Adding an element from available list
+      */
+      //Available list should have two elements
+      expect(DOMgetAvailable().length).toBe(2);
+
+      //Selecting the first element on the list
+      DOMgetAvailable().find("input:first")[0].click();
+
+      //Expecting the checkbox to be selected
+      expect(DOMgetAvailable().find("input:first").prop("checked")).toBe(true);
+
+      //Clicking the add button
+      element.find(".btn.mover.left")[0].click();
+
+      //The added element should be moved to the selected elements, leaving just one element in the
+      //available list
+      expect(DOMgetAvailable().length).toBe(1);
+      expect(DOMgetSelected().length).toBe(2);       
+
+      /*
+        Removing an element from selected list
+      */
+    
+      //Selecting the first element on the select list
+      DOMgetSelected().find("input:nth-of-type(1)")[0].click();
+
+      //Expecting the checkbox to be selected
+      expect(DOMgetSelected().find("input:nth-of-type(1)").prop("checked")).toBe(true);
+
+      //Clicking the remove button
+      element.find(".btn.mover.right")[0].click();
+
+      //The added element should be moved to the available elements, leaving three elements in the
+      //available list
+      expect(DOMgetAvailable().length).toBe(2);
+      expect(DOMgetSelected().length).toBe(1);         
+    });
+  })
 
 });
