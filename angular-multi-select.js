@@ -76,9 +76,6 @@
         }; 
 
         scope.add = function() {
-          if(!scope.model.length){
-            scope.model = [];
-          }
           scope.model = scope.model.concat(scope.selected(scope.selected.available));
         };
         scope.remove = function() {
