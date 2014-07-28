@@ -114,9 +114,9 @@
             });
           }
           else{
-            //We only want to refresh the list if the available list is defined,
-            //and the list of available items has changed
-            if(scope.available && scope.available != _oldAvailable){
+            //We only want to refresh the list if the list of available items has changed
+            //and the variable and model is defined
+            if(scope.available && scope.model && scope.available != _oldAvailable){
               scope.refreshAvailable();
               _oldAvailable = scope.available; 
             }
