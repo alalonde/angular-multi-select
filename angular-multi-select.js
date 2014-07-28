@@ -36,19 +36,6 @@
           current: []
         };
 
-        /* Adds a watch to the model data. When loading data async, 
-        this function resolves the promise, updating the directive model  */
-        var dataLoading = function(scopeAttr) {
-          var loading = $q.defer();
-          
-          scope.$watch(scopeAttr, function(newValue, oldValue) {
-            if(newValue && newValue.length > 0)
-              loading.resolve(newValue);
-          });  
-          
-          return loading.promise;
-        };
-
         /* Filters out items in original that are also in toFilter. Compares by reference. */
         function filterOut(original, toFilter) {
           var filtered = [];
@@ -89,6 +76,9 @@
         }; 
 
         scope.add = function() {
+          if(!scope.model.length){
+            scope.model = [];
+          }
           scope.model = scope.model.concat(scope.selected(scope.selected.available));
         };
         scope.remove = function() {
@@ -100,12 +90,41 @@
           var found = [];
           angular.forEach(list, function(item) { if(item.selected === true) found.push(item); });
           return found;
-        };
+        };  
 
-        $q.all([dataLoading("model"), dataLoading("available")]).then(function(results) {
-          scope.refreshAvailable();
-          scope.$watch('model', scope.refreshAvailable);
-        });
+        //Watching the model, updating if the model is a resolved promise
+        scope.watchModel = function(){
+          scope.$watch("model", function(){
+            if(scope.model && scope.model.hasOwnProperty('$promise') && !scope.model.$resolved){
+              scope.model.then(function(results) {
+                scope.$watch('model', scope.watchModel);
+              });
+            }
+            else{
+              scope.refreshAvailable();
+
+              scope.$watch('model', scope.refreshAvailable);  
+          }});
+        }
+        
+        //Watching the list of available items. Updating if it is a resolved promise, and refreshing the 
+        //available list if the list has changed
+        var _oldAvailable = {};
+        scope.watchAvailable = function(){
+          if(scope.available && scope.available.hasOwnProperty('$promise') && !scope.available.$resolved){
+            scope.available.$promise.then(function(results) {
+              scope.$watch('available', scope.watchAvailable);
+            });
+          }
+          else{
+            //We only want to refresh the list if the list of available items has changed
+            if(scope.available !== _oldAvailable){
+              scope.refreshAvailable();
+              _oldAvailable = scope.available; 
+            }
+        }};
+
+        scope.$watch("available", scope.watchAvailable);
 
         scope.renderItem = function(item) {
           return parseExpression(item, attrs.display);
@@ -117,7 +136,7 @@
           }
           return "";
         };
-      
+
         if(scope.config && angular.isDefined(scope.config.requiredMin)) {
           var inputs = elm.find("input");
           var validationInput = angular.element(inputs[inputs.length - 1]);
