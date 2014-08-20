@@ -69,6 +69,23 @@
           return filtered;
         }
 
+        function removeMutallyExclusive(source,target){
+            var toRemove = [];
+            angular.forEach(source, function(item){
+
+                for (var x = 0; x < item.mx.length; x++){
+                    // mx loop for the incoming element
+                    var id = item.mx[x];
+                    for (var z = 0; z < target.length; z++){
+                        if (target[z].roleId === id){
+                            toRemove.push(target[z]);
+                        }
+                    }
+                }
+            });
+            return toRemove;
+        }
+
         function parseExpression(item, expr) {
           var displayComponents = expr.match(/(.+)\s+as\s+(.+)/);
           var ctx = {};
@@ -91,7 +108,11 @@
         }; 
 
         scope.add = function() {
-          scope.model = scope.model.concat(scope.selected(scope.selected.available));
+           var listToAdd = scope.selected(scope.selected.available);
+            var mx = removeMutallyExclusive(listToAdd,scope.selected.current);
+            scope.available = scope.available.concat(mx);
+            scope.model = filterOut(scope.model,mx);
+          scope.model = scope.model.concat(listToAdd);
         };
         scope.remove = function() {
           var selected = scope.selected(scope.selected.current);
@@ -142,41 +163,42 @@
 
   angular.module("template/multiSelect.html", []).run(["$templateCache", function($templateCache) {
     $templateCache.put("template/multiSelect.html",
-      '<div class="multiSelect">' + 
-        '<div class="select">' + 
-          '<label class="control-label" for="multiSelectSelected">{{ selectedLabel }} ' +
-              '({{ model.length }})</label>' +
-          '<ul>' + 
-            '<li ng-repeat="entity in model">' + 
-              '<label class="checkbox" title="{{ renderTitle(entity) }}">' + 
-                '<input type="checkbox" ng-model="selected.current[$index].selected"> ' + 
-                '{{ renderItem(entity) }}' + 
-              '</label>' +
-            '</li>' +
-          '</ul>' +
-        '</div>' + 
-        '<div class="select buttons">' + 
-          '<button class="btn mover left" ng-click="add()" title="Add selected" ' + 
-              'ng-disabled="!selected(selected.available).length">' + 
-            '<i class="icon-arrow-left"></i>' + 
-          '</button>' + 
-          '<button class="btn mover right" ng-click="remove()" title="Remove selected" ' + 
-              'ng-disabled="!selected(selected.current).length">' + 
-            '<i class="icon-arrow-right"></i>' + 
-          '</button>' +
-        '</div>' + 
-        '<div class="select">' +
+      '<div class="multiSelect">' +
+          '<div class="select">' +
           '<label class="control-label" for="multiSelectAvailable">{{ availableLabel }} ' +
-              '({{ available.length }})</label>' +
-          '<ul>' + 
-            '<li ng-repeat="entity in available">' + 
-              '<label class="checkbox" title="{{ renderTitle(entity) }}">' + 
-                '<input type="checkbox" ng-model="selected.available[$index].selected"> ' + 
-                '{{ renderItem(entity) }}' + 
-              '</label>' +
-            '</li>' +
+          '({{ available.length }})</label>' +
+          '<ul>' +
+          '<li ng-repeat="entity in available">' +
+          '<label class="checkbox" title="{{ renderTitle(entity) }}">' +
+          '<input type="checkbox" ng-model="selected.available[$index].selected"> ' +
+          '{{ renderItem(entity) }}' +
+          '</label>' +
+          '</li>' +
           '</ul>' +
+          '</div>' +
+        '<div class="select buttons">' + 
+          '<button class="btn mover right" ng-click="add()" title="Add selected" ' +
+              'ng-disabled="!selected(selected.available).length">' + 
+            '<i class="icon-arrow-right"></i>' +
+          '</button>' + 
+          '<button class="btn mover left" ng-click="remove()" title="Remove selected" ' +
+              'ng-disabled="!selected(selected.current).length">' + 
+            '<i class="icon-arrow-left"></i>' +
+          '</button>' +
         '</div>' +
+          '<div class="select">' +
+          '<label class="control-label" for="multiSelectSelected">{{ selectedLabel }} ' +
+          '({{ model.length }})</label>' +
+          '<ul>' +
+          '<li ng-repeat="entity in model">' +
+          '<label class="checkbox" title="{{ renderTitle(entity) }}">' +
+          '<input type="checkbox" ng-model="selected.current[$index].selected"> ' +
+          '{{ renderItem(entity) }}' +
+          '</label>' +
+          '</li>' +
+          '</ul>' +
+          '</div>' +
+
         '<input type="number" name="numSelected" ng-model="numSelected" ' +
             'style="display: none">' +
       '</div>');

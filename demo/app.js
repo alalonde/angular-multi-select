@@ -4,8 +4,10 @@
 var myApp = angular.module('myApp',['multi-select'])
 .controller('MyCtrl', function($scope) {
   $scope.roles = [
-    {roleId: 1, roleName: "Administrator", roleDescription: "Can do a bunch of stuff"},
-    {roleId: 2, roleName: "Super User", roleDescription: "Ultimate power!"}
+    {roleId: 1, roleName: "Administrator", roleDescription: "Can do a bunch of stuff",mx:[]},
+    {roleId: 2, roleName: "Super User", roleDescription: "Ultimate power!",mx:[]},
+    {roleId:3, roleName:"Unlimited Cosmic Power", roleDescription:"Ultimate power",mx:[4]},
+    {roleId:4, roleName:"Itty Bitty Living Space", roleDescription:"a tiny bottle",mx:[3]}
   ];
   
   $scope.user = {
