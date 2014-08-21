@@ -1,5 +1,8 @@
 /*
  Multiple-select directive for AngularJS
+ (c) 2014 Tyler Mendenhall (https://github.com/tmendenhall/angular-multi-select)
+ License: MIT
+    forked from
  (c) 2013 Alec LaLonde (https://github.com/alalonde/angular-multi-select)
  License: MIT
 */
@@ -7,7 +10,7 @@
   'use strict';
 
   angular.module('multi-select', ["template/multiSelect.html"])
-  .directive('multiSelect', ['$q', '$parse', function($q, $parse) {
+  .directive('multiSelect', ['$q', '$parse', '$filter',function($q, $parse, $filter) {
 
     function appendSelected(entities) {
       var newEntities = [];
@@ -69,6 +72,23 @@
           return filtered;
         }
 
+        function removeMutallyExclusive(source,target){
+            var toRemove = [];
+            angular.forEach(source, function(item){
+
+                for (var x = 0; x < item.mx.length; x++){
+                    // mx loop for the incoming element
+                    var id = item.mx[x];
+                    for (var z = 0; z < target.length; z++){
+                        if (target[z].roleId === id){
+                            toRemove.push(target[z]);
+                        }
+                    }
+                }
+            });
+            return toRemove;
+        }
+
         function parseExpression(item, expr) {
           var displayComponents = expr.match(/(.+)\s+as\s+(.+)/);
           var ctx = {};
@@ -84,20 +104,37 @@
           }
         }
 
+        // call as a result of either load promise being fulfilled
+        // as a watch on model
         scope.refreshAvailable = function() {
-          scope.available = filterOut(scope.available, scope.model);
-          scope.selected.available = appendSelected(scope.available);
-          scope.selected.current = appendSelected(scope.model);
-        }; 
+          scope.available = $filter('orderBy')(filterOut(scope.available, scope.model),'roleName');
+          scope.selected.available = $filter('orderBy')(appendSelected(scope.available),'roleName');
+          scope.selected.current = $filter('orderBy')(appendSelected(scope.model),'roleName');
+        };
+
+        scope.disableMXSelected = function(selectedElement){
+            var mx = selectedElement.mx;
+           angular.forEach(scope.selected.available, function(element){
+               // this function needs to be patched for old IE8 browsers
+                if (mx.indexOf(element.roleId) > -1 ){
+                    element.selected = false;
+                }
+           });
+        };
 
         scope.add = function() {
-          scope.model = scope.model.concat(scope.selected(scope.selected.available));
+           var listToAdd = scope.selected(scope.selected.available);
+            var mx = removeMutallyExclusive(listToAdd,scope.selected.current);
+            scope.available = $filter('orderBy')(scope.available.concat(mx),'roleName');
+            scope.model = filterOut(scope.model,mx);
+            scope.model = $filter('orderBy')(scope.model.concat(listToAdd),'roleName');
         };
         scope.remove = function() {
           var selected = scope.selected(scope.selected.current);
-          scope.available = scope.available.concat(selected);
-          scope.model = filterOut(scope.model, selected);
+          scope.available = $filter('orderBy')(scope.available.concat(selected),'roleName');
+          scope.model = $filter('orderBy')(filterOut(scope.model, selected),'roleName');
         };
+
         scope.selected = function(list) {
           var found = [];
           angular.forEach(list, function(item) { if(item.selected === true) found.push(item); });
@@ -136,49 +173,56 @@
         scope.$watch('model', function(selected) {
           ensureMinSelected();
         });
+
+        // keep an eye on this..
+        // it was added because the inital state was incorrect
+        // and refreshAvailable was not being called.
+        scope.$watch('available', function(availModel){
+          scope.selected.available = angular.copy(availModel);
+        });
       }
     };
   }]);
 
   angular.module("template/multiSelect.html", []).run(["$templateCache", function($templateCache) {
     $templateCache.put("template/multiSelect.html",
-      '<div class="multiSelect">' + 
-        '<div class="select">' + 
-          '<label class="control-label" for="multiSelectSelected">{{ selectedLabel }} ' +
-              '({{ model.length }})</label>' +
-          '<ul>' + 
-            '<li ng-repeat="entity in model">' + 
-              '<label class="checkbox" title="{{ renderTitle(entity) }}">' + 
-                '<input type="checkbox" ng-model="selected.current[$index].selected"> ' + 
-                '{{ renderItem(entity) }}' + 
-              '</label>' +
-            '</li>' +
-          '</ul>' +
-        '</div>' + 
-        '<div class="select buttons">' + 
-          '<button class="btn mover left" ng-click="add()" title="Add selected" ' + 
-              'ng-disabled="!selected(selected.available).length">' + 
-            '<i class="icon-arrow-left"></i>' + 
-          '</button>' + 
-          '<button class="btn mover right" ng-click="remove()" title="Remove selected" ' + 
-              'ng-disabled="!selected(selected.current).length">' + 
-            '<i class="icon-arrow-right"></i>' + 
-          '</button>' +
-        '</div>' + 
-        '<div class="select">' +
+      '<div class="multiSelect">' +
+          '<div class="select">' +
           '<label class="control-label" for="multiSelectAvailable">{{ availableLabel }} ' +
-              '({{ available.length }})</label>' +
-          '<ul>' + 
-            '<li ng-repeat="entity in available">' + 
-              '<label class="checkbox" title="{{ renderTitle(entity) }}">' + 
-                '<input type="checkbox" ng-model="selected.available[$index].selected"> ' + 
-                '{{ renderItem(entity) }}' + 
-              '</label>' +
-            '</li>' +
+          '({{ available.length }})</label>' +
+          '<ul>' +
+          '<li ng-repeat="entity in available | orderBy:\'roleName\'">' +
+          '<label class="checkbox" title="{{ renderTitle(entity) }}">' +
+          '<input type="checkbox" ng-model="selected.available[$index].selected" ng-change="disableMXSelected(selected.available[$index])"> ' +
+          '{{ renderItem(entity) }}' +
+          '</label>' +
+          '</li>' +
           '</ul>' +
+          '</div>' +
+        '<div class="select buttons">' + 
+          '<button class="btn btn-primary mover right" ng-click="add()" title="Add selected" ' +
+              'ng-disabled="!selected(selected.available).length">' + 
+            '<i class="glyphicon glyphicon-arrow-right"></i>' +
+          '</button>' + 
+          '<button class="btn btn-primary mover left" ng-click="remove()" title="Remove selected" ' +
+              'ng-disabled="!selected(selected.current).length">' + 
+            '<i class="glyphicon glyphicon-arrow-left"></i>' +
+          '</button>' +
         '</div>' +
-        '<input type="number" name="numSelected" ng-model="numSelected" ' +
-            'style="display: none">' +
+          '<div class="select">' +
+          '<label class="control-label" for="multiSelectSelected">{{ selectedLabel }} ' +
+          '({{ model.length }})</label>' +
+          '<ul>' +
+          '<li ng-repeat="entity in model | orderBy:\'roleName\'">' +
+          '<label class="checkbox" title="{{ renderTitle(entity) }}">' +
+          '<input type="checkbox" ng-model="selected.current[$index].selected"> ' +
+          '{{ renderItem(entity) }}' +
+          '</label>' +
+          '</li>' +
+          '</ul>' +
+          '</div>' +
+
+        '<input type="hidden" name="numSelected" ng-model="numSelected"/> '+
       '</div>');
   }])
   ;
