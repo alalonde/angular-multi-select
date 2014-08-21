@@ -173,6 +173,13 @@
         scope.$watch('model', function(selected) {
           ensureMinSelected();
         });
+
+        // keep an eye on this..
+        // it was added because the inital state was incorrect
+        // and refreshAvailable was not being called.
+        scope.$watch('available', function(availModel){
+          scope.selected.available = angular.copy(availModel);
+        });
       }
     };
   }]);
