@@ -193,11 +193,11 @@
           '</ul>' +
           '</div>' +
         '<div class="select buttons">' + 
-          '<button class="btn mover right" ng-click="add()" title="Add selected" ' +
+          '<button class="btn btn-primary mover right" ng-click="add()" title="Add selected" ' +
               'ng-disabled="!selected(selected.available).length">' + 
             '<i class="glyphicon glyphicon-arrow-right"></i>' +
           '</button>' + 
-          '<button class="btn mover left" ng-click="remove()" title="Remove selected" ' +
+          '<button class="btn btn-primary mover left" ng-click="remove()" title="Remove selected" ' +
               'ng-disabled="!selected(selected.current).length">' + 
             '<i class="glyphicon glyphicon-arrow-left"></i>' +
           '</button>' +
