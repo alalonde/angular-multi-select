@@ -195,11 +195,11 @@
         '<div class="select buttons">' + 
           '<button class="btn mover right" ng-click="add()" title="Add selected" ' +
               'ng-disabled="!selected(selected.available).length">' + 
-            '<i class="icon-arrow-right"></i>' +
+            '<i class="glyphicon glyphicon-arrow-right"></i>' +
           '</button>' + 
           '<button class="btn mover left" ng-click="remove()" title="Remove selected" ' +
               'ng-disabled="!selected(selected.current).length">' + 
-            '<i class="icon-arrow-left"></i>' +
+            '<i class="glyphicon glyphicon-arrow-left"></i>' +
           '</button>' +
         '</div>' +
           '<div class="select">' +
