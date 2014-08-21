@@ -14,7 +14,7 @@ var myApp = angular.module('myApp',['multi-select'])
   $scope.user = {
     userId: 1, 
     username: "JimBob",
-    roles: [$scope.roles[0]]
+    roles: [$scope.roles[1], $scope.roles[0]]
   };
 
   $scope.selectConfig = {
