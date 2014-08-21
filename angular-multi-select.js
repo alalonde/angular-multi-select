@@ -1,5 +1,8 @@
 /*
  Multiple-select directive for AngularJS
+ (c) 2014 Tyler Mendenhall (https://github.com/tmendenhall/angular-multi-select)
+ License: MIT
+    forked from
  (c) 2013 Alec LaLonde (https://github.com/alalonde/angular-multi-select)
  License: MIT
 */
@@ -7,7 +10,7 @@
   'use strict';
 
   angular.module('multi-select', ["template/multiSelect.html"])
-  .directive('multiSelect', ['$q', '$parse', function($q, $parse) {
+  .directive('multiSelect', ['$q', '$parse', '$filter',function($q, $parse, $filter) {
 
     function appendSelected(entities) {
       var newEntities = [];
@@ -101,24 +104,37 @@
           }
         }
 
+        // call as a result of either load promise being fulfilled
+        // as a watch on model
         scope.refreshAvailable = function() {
-          scope.available = filterOut(scope.available, scope.model);
-          scope.selected.available = appendSelected(scope.available);
-          scope.selected.current = appendSelected(scope.model);
-        }; 
+          scope.available = $filter('orderBy')(filterOut(scope.available, scope.model),'roleName');
+          scope.selected.available = $filter('orderBy')(appendSelected(scope.available),'roleName');
+          scope.selected.current = $filter('orderBy')(appendSelected(scope.model),'roleName');
+        };
+
+        scope.disableMXSelected = function(selectedElement){
+            var mx = selectedElement.mx;
+           angular.forEach(scope.selected.available, function(element){
+               // this function needs to be patched for old IE8 browsers
+                if (mx.indexOf(element.roleId) > -1 ){
+                    element.selected = false;
+                }
+           });
+        };
 
         scope.add = function() {
            var listToAdd = scope.selected(scope.selected.available);
             var mx = removeMutallyExclusive(listToAdd,scope.selected.current);
-            scope.available = scope.available.concat(mx);
+            scope.available = $filter('orderBy')(scope.available.concat(mx),'roleName');
             scope.model = filterOut(scope.model,mx);
-          scope.model = scope.model.concat(listToAdd);
+            scope.model = $filter('orderBy')(scope.model.concat(listToAdd),'roleName');
         };
         scope.remove = function() {
           var selected = scope.selected(scope.selected.current);
-          scope.available = scope.available.concat(selected);
-          scope.model = filterOut(scope.model, selected);
+          scope.available = $filter('orderBy')(scope.available.concat(selected),'roleName');
+          scope.model = $filter('orderBy')(filterOut(scope.model, selected),'roleName');
         };
+
         scope.selected = function(list) {
           var found = [];
           angular.forEach(list, function(item) { if(item.selected === true) found.push(item); });
@@ -168,9 +184,9 @@
           '<label class="control-label" for="multiSelectAvailable">{{ availableLabel }} ' +
           '({{ available.length }})</label>' +
           '<ul>' +
-          '<li ng-repeat="entity in available">' +
+          '<li ng-repeat="entity in available | orderBy:\'roleName\'">' +
           '<label class="checkbox" title="{{ renderTitle(entity) }}">' +
-          '<input type="checkbox" ng-model="selected.available[$index].selected"> ' +
+          '<input type="checkbox" ng-model="selected.available[$index].selected" ng-change="disableMXSelected(selected.available[$index])"> ' +
           '{{ renderItem(entity) }}' +
           '</label>' +
           '</li>' +
@@ -190,7 +206,7 @@
           '<label class="control-label" for="multiSelectSelected">{{ selectedLabel }} ' +
           '({{ model.length }})</label>' +
           '<ul>' +
-          '<li ng-repeat="entity in model">' +
+          '<li ng-repeat="entity in model | orderBy:\'roleName\'">' +
           '<label class="checkbox" title="{{ renderTitle(entity) }}">' +
           '<input type="checkbox" ng-model="selected.current[$index].selected"> ' +
           '{{ renderItem(entity) }}' +
@@ -199,8 +215,7 @@
           '</ul>' +
           '</div>' +
 
-        '<input type="number" name="numSelected" ng-model="numSelected" ' +
-            'style="display: none">' +
+        '<input type="hidden" name="numSelected" ng-model="numSelected"/> '+
       '</div>');
   }])
   ;
