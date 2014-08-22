@@ -44,3 +44,6 @@ $scope.selectConfig = {
 More information here: http://blog.boxelderweb.com/2013/08/22/angularjs-multi-select-widget/
 
 License: MIT
+
+## Updates
+* 8/22/14: Merged tests, fixed bug where async init data was sometimes improperly handled

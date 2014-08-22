@@ -95,16 +95,16 @@
 
         //Watching the model, updating if the model is a resolved promise
         scope.watchModel = function(){
-            if(scope.model && scope.model.hasOwnProperty('$promise') && !scope.model.$resolved){
-              scope.model.then(function(results) {
-                scope.$watch('model', scope.watchModel);
-              });
-            }
-            else{
-              scope.refreshAvailable();
-              scope.$watch('model', scope.refreshAvailable);  
-            }
-        }
+          if(scope.model && scope.model.hasOwnProperty('$promise') && !scope.model.$resolved){
+            scope.model.then(function(results) {
+              scope.$watch('model', scope.watchModel);
+            });
+          }
+          else{
+            scope.refreshAvailable();
+            scope.$watch('model', scope.refreshAvailable);  
+          }
+        };
         
         //Watching the list of available items. Updating if it is a resolved promise, and refreshing the 
         //available list if the list has changed
