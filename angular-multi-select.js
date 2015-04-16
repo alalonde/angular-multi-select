@@ -161,12 +161,13 @@
 
   angular.module("template/multiSelect.html", []).run(["$templateCache", function($templateCache) {
     $templateCache.put("template/multiSelect.html",
-      '<div class="multiSelect">' + 
-        '<div class="select">' + 
+      '<div class="multiSelect">' +
+        '<div class="select">' +
           '<label class="control-label" for="multiSelectSelected">{{ selectedLabel }} ' +
               '({{ model.length }})</label>' +
-          '<ul>' + 
-            '<li ng-repeat="entity in model">' + 
+        '<input ng-model="searchLeft">' +
+        '<ul>' +
+            '<li ng-repeat="entity in model | filter:searchLeft">' + 
               '<label class="checkbox" title="{{ renderTitle(entity) }}">' + 
                 '<input type="checkbox" ng-model="selected.current[$index].selected"> ' + 
                 '{{ renderItem(entity) }}' + 
@@ -185,10 +186,11 @@
           '</button>' +
         '</div>' + 
         '<div class="select">' +
-          '<label class="control-label" for="multiSelectAvailable">{{ availableLabel }} ' +
+        '<label class="control-label" for="multiSelectAvailable">{{ availableLabel }} ' +
               '({{ available.length }})</label>' +
-          '<ul>' + 
-            '<li ng-repeat="entity in available">' + 
+        '<input ng-model="searchRight">'+
+        '<ul>' +
+            '<li ng-repeat="entity in available|filter:searchRight">' + 
               '<label class="checkbox" title="{{ renderTitle(entity) }}">' + 
                 '<input type="checkbox" ng-model="selected.available[$index].selected"> ' + 
                 '{{ renderItem(entity) }}' + 
