@@ -13,9 +13,6 @@
     clear: both;
     font-size: 11px;
 }
-.multiSelect label.control-label::after {
-    content: ":";
-}
 .multiSelect label.checkbox {
     margin-bottom: 0;
 }
@@ -27,7 +24,16 @@
 .btn.mover.left {
     padding: 6px 8px 6px 6px;
 }
+.btn.mover.left-all {
+    margin-top: 5px;
+    padding: 6px 7px;
+}
+
 .btn.mover.right {
+    margin-top: 5px;
+    padding: 6px 7px;
+}
+.btn.mover.right-all{
     margin-top: 5px;
     padding: 6px 7px;
 }

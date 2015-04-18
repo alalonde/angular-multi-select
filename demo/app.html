@@ -20,17 +20,6 @@
         <multi-select ng-model="user.roles" available="roles" selected-label="Current roles" 
             available-label="Available roles" display="r as r.roleName"
             title="r as r.roleDescription" config="selectConfig"></multi-select>
-        <div class="input-error" ng-show="selectForm.numSelected.$error.min">
-          Please select at least 
-          <ng-pluralize count="selectConfig.requiredMin" 
-              when="{'one': 'one role', 'other': '{} roles'}">.
-        </div>
-        <div>{{ user.username }}'s roles: </div>
-        <ul class='detail'>
-          <li ng-repeat="role in user.roles">{{ role.roleName }}</li>
-        </ul>    
-        <label for="reqMin">Required minimum number of roles:</label>
-        <input type="number" id="reqMin" ng-model="selectConfig.requiredMin" min="1">
       </form>
     </div>
   </body>

@@ -82,10 +82,20 @@
             scope.model = [];
           scope.model = scope.model.concat(scope.selected(scope.selected.available));         
         };
+        scope.addAll = function(){
+            if(!scope.model.length) {
+                scope.model = [];
+            }
+          scope.model = scope.model.concat(scope.available);
+        };
         scope.remove = function() {
           var selected = scope.selected(scope.selected.current);
           scope.available = scope.available.concat(selected);
           scope.model = filterOut(scope.model, selected);
+        };
+        scope.removeAll = function() {
+          scope.available = scope.available.concat(scope.model);
+          scope.model = filterOut(scope.model, scope.model);
         };
         scope.selected = function(list) {
           var found = [];
@@ -164,7 +174,7 @@
       '<div class="multiSelect">' +
         '<div class="select">' +
           '<label class="control-label" for="multiSelectSelected">{{ selectedLabel }} ' +
-              '({{ model.length }})</label>' +
+              '{{selectedLabel==""?"":"("+model.length+")"}}</label>' +
         '<input ng-model="searchLeft">' +
         '<ul>' +
             '<li ng-repeat="entity in model | filter:searchLeft">' + 
@@ -179,15 +189,23 @@
           '<button class="btn mover left" ng-click="add()" title="Add selected" ' + 
               'ng-disabled="!selected(selected.available).length">' + 
             '<i class="icon-arrow-left"></i>' + 
-          '</button>' + 
+          '</button>' +
+          '<button class="btn mover left-all" ng-click="addAll()" title="Add selected" ' +
+              'ng-disabled="!available.length">' +
+            '<i class="icon-backward"></i>' +
+           '</button>' +
           '<button class="btn mover right" ng-click="remove()" title="Remove selected" ' + 
               'ng-disabled="!selected(selected.current).length">' + 
             '<i class="icon-arrow-right"></i>' + 
           '</button>' +
+          '<button class="btn mover right-all" ng-click="removeAll()" title="Remove selected" ' +
+              'ng-disabled="!model.length">' +
+             '<i class="icon-forward"></i>' +
+           '</button>' +
         '</div>' + 
         '<div class="select">' +
         '<label class="control-label" for="multiSelectAvailable">{{ availableLabel }} ' +
-              '({{ available.length }})</label>' +
+              '{{ availableLabel==""?"": "(" +available.length +")" }}</label>' +
         '<input ng-model="searchRight">'+
         '<ul>' +
             '<li ng-repeat="entity in available|filter:searchRight">' + 
