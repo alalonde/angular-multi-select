@@ -192,7 +192,7 @@
           '</button>' +
           '<button class="btn mover left-all" ng-click="addAll()" title="Add selected" ' +
               'ng-disabled="!available.length">' +
-            '<i class="icon-backward"></i>' +
+            '<i class="icon-arrow-left-all"></i>' +
            '</button>' +
           '<button class="btn mover right" ng-click="remove()" title="Remove selected" ' + 
               'ng-disabled="!selected(selected.current).length">' + 
@@ -200,7 +200,7 @@
           '</button>' +
           '<button class="btn mover right-all" ng-click="removeAll()" title="Remove selected" ' +
               'ng-disabled="!model.length">' +
-             '<i class="icon-forward"></i>' +
+             '<i class="icon-arrow-right-all"></i>' +
            '</button>' +
         '</div>' + 
         '<div class="select">' +
