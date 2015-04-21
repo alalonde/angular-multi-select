@@ -175,43 +175,45 @@
         '<div class="select">' +
           '<label class="control-label" for="multiSelectSelected">{{ selectedLabel }} ' +
               '{{selectedLabel==""?"":"("+model.length+")"}}</label>' +
-        '<input ng-model="searchLeft">' +
+        '<input ng-model="searchLeft" class="search">' +
         '<ul>' +
-            '<li ng-repeat="entity in model | filter:searchLeft">' + 
-              '<label class="checkbox" title="{{ renderTitle(entity) }}">' + 
-                '<input type="checkbox" ng-model="selected.current[$index].selected"> ' + 
-                '{{ renderItem(entity) }}' + 
+            '<li ng-repeat="entity in model | filter:searchLeft">' +
+              '<label class="checkbox" title="{{ renderTitle(entity) }}">' +
+                '<input type="checkbox" ng-model="selected.current[$index].selected"> ' +
+                '{{ renderItem(entity) }}' +
               '</label>' +
             '</li>' +
           '</ul>' +
-        '</div>' + 
-        '<div class="select buttons">' + 
-          '<button class="btn mover left" ng-click="add()" title="Add selected" ' + 
-              'ng-disabled="!selected(selected.available).length">' + 
-            '<i class="icon-arrow-left"></i>' + 
+        '</div>' +
+        '<div class="select buttons">' +
+          '<button class="btn mover left" ng-click="add()" title="Add selected" ' +
+              'ng-disabled="!selected(selected.available).length">' +
+            '<span class="icon-chevron-left"></span>' +
           '</button>' +
           '<button class="btn mover left-all" ng-click="addAll()" title="Add selected" ' +
               'ng-disabled="!available.length">' +
-            '<i class="icon-arrow-left-all"></i>' +
+          '<span class="icon-chevron-left first"></span>' +
+          '<span class="icon-chevron-left second"></span>' +
            '</button>' +
-          '<button class="btn mover right" ng-click="remove()" title="Remove selected" ' + 
-              'ng-disabled="!selected(selected.current).length">' + 
-            '<i class="icon-arrow-right"></i>' + 
+          '<button class="btn mover right" ng-click="remove()" title="Remove selected" ' +
+              'ng-disabled="!selected(selected.current).length">' +
+            '<span class="icon-chevron-right"></span>' +
           '</button>' +
           '<button class="btn mover right-all" ng-click="removeAll()" title="Remove selected" ' +
               'ng-disabled="!model.length">' +
-             '<i class="icon-arrow-right-all"></i>' +
+             '<span class="icon-chevron-right first"></span>' +
+             '<span class="icon-chevron-right second"></span>' +
            '</button>' +
-        '</div>' + 
+        '</div>' +
         '<div class="select">' +
         '<label class="control-label" for="multiSelectAvailable">{{ availableLabel }} ' +
               '{{ availableLabel==""?"": "(" +available.length +")" }}</label>' +
-        '<input ng-model="searchRight">'+
+        '<input ng-model="searchRight" class="search">'+
         '<ul>' +
-            '<li ng-repeat="entity in available|filter:searchRight">' + 
-              '<label class="checkbox" title="{{ renderTitle(entity) }}">' + 
-                '<input type="checkbox" ng-model="selected.available[$index].selected"> ' + 
-                '{{ renderItem(entity) }}' + 
+            '<li ng-repeat="entity in available|filter:searchRight">' +
+              '<label class="checkbox" title="{{ renderTitle(entity) }}">' +
+                '<input type="checkbox" ng-model="selected.available[$index].selected"> ' +
+                '{{ renderItem(entity) }}' +
               '</label>' +
             '</li>' +
           '</ul>' +
