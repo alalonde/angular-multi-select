@@ -17,8 +17,8 @@
   <body ng-app="myApp">
     <div ng-controller="MyCtrl">
       <form name="selectForm">
-        <multi-select ng-model="user.roles" available="roles" selected-label="Current roles" 
-            available-label="Available roles" display="r as r.roleName"
+        <multi-select ng-model="user.roles" available="roles" selected-label="Current roles"  selected-placeholder="current roles"
+            available-label="Available roles" available-placeholder="available roles" display="r as r.roleName"
             title="r as r.roleDescription" config="selectConfig"></multi-select>
       </form>
     </div>
